@@ -2,18 +2,23 @@ angular.module('songhop.services', [])
   .factory('User',function(){
       //Store favorie songs
         var store = {
-          favorites: []
+          favorites: [],
+          newFavorites:0
         };
         //Store favorite songs
         store.addSongToFavorites = function(song){
           if(!song) return false;
           store.favorites.push(song);
+          store.newFavorites++;
         }
         //Remove song in favorites
         store.removeSongFromFavorites = function(song,index) {
             if(!song) return false;
             //Remove one song starting at this.index
             store.favorites.splice(index,1);
+        }
+        store.favoriteCount = function(){
+          return store.newFavorites;
         }
         return store;
 })
