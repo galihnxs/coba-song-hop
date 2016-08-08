@@ -27,40 +27,61 @@ angular.module('songhop', ['ionic', 'songhop.controllers'])
   // Learn more here: https://github.com/angular-ui/ui-router.
   // Set up the various states in which the app can be.
   // Each state's controller can be found in controllers.js.
-  $stateProvider
+    $stateProvider
 
-
-  // Set up an abstract state for the tabs directive:
-  .state('tab', {
-    url: '/tab',
-    abstract: true,
-    templateUrl: 'templates/tabs.html',
-    controller: 'TabsCtrl'
-  })
-
-  // Each tab has its own nav history stack:
-
-  .state('tab.discover', {
-    url: '/discover',
-    views: {
-      'tab-discover': {
-        templateUrl: 'templates/discover.html',
-        controller: 'DiscoverCtrl'
+    // Set up an abstract state for the tabs directive:
+    .state('tab', {
+      url: '/tab',
+      abstract: true,
+      templateUrl: 'templates/tabs.html',
+      controller: 'TabsCtrl',
+      //dont load state until we populated our user
+      resolve: {
+        populateSession: function(User){
+          return User.checkSession();
+        }
+      },
+      onEnter: function($state, User){
+        User.checkSession().then(function(hasSession){
+          if(!hasSession) $state.go('splash');
+        });
       }
-    }
-  })
+    })
 
-  .state('tab.favorites', {
-      url: '/favorites',
+    // Each tab has its own nav history stack:
+
+    .state('tab.discover', {
+      url: '/discover',
       views: {
-        'tab-favorites': {
-          templateUrl: 'templates/favorites.html',
-          controller: 'FavoritesCtrl'
+        'tab-discover': {
+          templateUrl: 'templates/discover.html',
+          controller: 'DiscoverCtrl'
         }
       }
     })
-  // If none of the above states are matched, use this as the fallback:
-  $urlRouterProvider.otherwise('/tab/discover');
+
+    .state('tab.favorites', {
+        url: '/favorites',
+        views: {
+          'tab-favorites': {
+            templateUrl: 'templates/favorites.html',
+            controller: 'FavoritesCtrl'
+          }
+        }
+      })
+    //Router for splash screen
+    .state('splash',{
+      url: '/',
+      templateUrl: 'templates/splash.html',
+      controller: 'SplashCtrl',
+      onEnter: function($state, User){
+        User.checkSession().then(function(hasSession){
+          if(hasSession)$state.go('tab.discover');
+        });
+      }
+    })
+    // If none of the above states are matched, use this as the fallback:
+    $urlRouterProvider.otherwise('/');
 
 })
 
