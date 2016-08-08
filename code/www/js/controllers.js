@@ -69,7 +69,8 @@ Controller for the discover page
 /*
 Controller for the favorites page
 */
-.controller('FavoritesCtrl', function($scope, User) {
+.controller('FavoritesCtrl', function($scope, User,$window) {
+  $scope.username = User.username;
   // add song into favorite
   $scope.favorites = User.favorites;
   //remove a song from favorite
@@ -81,11 +82,24 @@ Controller for the favorites page
     $window.open(song.open_url,"_system");
   }
 })
-
+/*
+Controller for our splash screen
+*/
+.controller('SplashCtrl',function($scope, $state, User){
+  //If user want to login/signup using Usr.auth
+  $scope.submitForm = function(username,signingUp){
+    //session is set
+    User.auth(username,signingUp).then(function(){
+      $state.go('tab.discover');
+    },function(){
+      alert('Please try another name');
+    });
+  }
+})
 /*
 Controller for our tab bar
 */
-.controller('TabsCtrl', function($scope,User) {
+.controller('TabsCtrl', function($scope,User,$window) {
     //Show number of favorites
     $scope.favCount = User.favoriteCount;
     //reset new favorites to 0 when user click fav tab
@@ -93,5 +107,9 @@ Controller for our tab bar
       User.newFavorites=0;
     }
     $scope.leavingFavorites = function(){
+    }
+    $scope.logout = function(){
+      User.destroySession();
+      $window.location.href = 'index.html';
     }
 });
