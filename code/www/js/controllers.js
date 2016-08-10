@@ -81,6 +81,7 @@ Controller for the favorites page
   $scope.openSong = function(song){
     $window.open(song.open_url,"_system");
   }
+
 })
 /*
 Controller for our splash screen
@@ -111,5 +112,5 @@ Controller for our tab bar
     $scope.logout = function(){
       User.destroySession();
       $window.location.href = 'index.html';
-    }
+    }    
 });
